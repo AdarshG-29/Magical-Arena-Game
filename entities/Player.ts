@@ -15,6 +15,7 @@ export class Player {
   ) {
     this.playerId = playerId;
     this.name = name;
+    this.health = health;
     this.strength = strength;
     this.attack = attack;
   }

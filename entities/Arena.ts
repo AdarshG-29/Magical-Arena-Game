@@ -5,7 +5,7 @@ import { Player } from "./Player";
 
 export class Arena {
   total_players: number;
-  private Players: Map<number, Player>;
+  private Players: Map<number, Player>; // we are using map to make the game for n players and not just for 2 players
 
   constructor() {
     this.total_players = 0;
@@ -29,15 +29,15 @@ export class Arena {
   ): number {
     //displaying invalid input messages
     if (inValidAttribute(health)) {
-      console.log("Invalid input!! Health should be a positive integer");
+      console.log("Invalid input!! Health should be a positive integer\n");
       return -1;
     }
     if (inValidAttribute(strength)) {
-      console.log("Invalid input!! Strength should be a positive integer");
+      console.log("Invalid input!! Strength should be a positive integer\n");
       return -1;
     }
     if (inValidAttribute(attack)) {
-      console.log("Invalid input!! Attack should be a positive integer");
+      console.log("Invalid input!! Attack should be a positive integer\n");
       return -1;
     }
     const playerId = this.total_players;
@@ -57,7 +57,6 @@ export class Arena {
   }
 
   showPlayers(): void {
-    console.log("\n");
     for (const [id, player] of this.Players) {
       const { name, health, strength, attack } = player;
       console.log(`Name: ${name}`);
@@ -65,6 +64,7 @@ export class Arena {
       console.log(`Health: ${health}`);
       console.log(`Strength: ${strength}`);
       console.log(`Attack: ${attack}`);
+      console.log("\n");
     }
   }
 
@@ -95,13 +95,13 @@ export class Arena {
       const defending_power = defender.strength * defenderRolledDice;
 
       console.log(
-        `${attacker.name} rolled dice of ${attackerRolledDice} and attacks with the power ${attacking_power}`
+        `${attacker.name} rolled dice ${attackerRolledDice} and attacks with the power ${attacking_power}`
       );
       console.log(
-        `${defender.name} rolled dice of ${defenderRolledDice} and defends with the strength ${defending_power}`
+        `${defender.name} rolled dice ${defenderRolledDice} and defends with the strength ${defending_power}`
       );
 
-      console.log("After Attack:\n");
+      console.log("\nAfter Attack:\n");
 
       if (attacking_power > defending_power)
         defender.health = Math.max(
