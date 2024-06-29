@@ -1,40 +1,35 @@
 import { Arena } from "./entities/Arena";
-import promptSync from "prompt-sync";
+import {
+  exitMessage,
+  showMenuItems,
+  showNotEnoughPlayerMessage,
+} from "./utils/consoleOutput";
+import {
+  getMenuInput,
+  getPlayerDetailInput,
+  getPlayerIds,
+} from "./utils/helper";
 
-const prompt = promptSync();
 const magical_arena = new Arena();
 
 function execute_magical_arena() {
   while (1) {
     magical_arena.showPlayers();
-    console.log(
-      "Options: \n\t1. Add new player\n\t2. Start playing\n\t3. Exit\n"
-    );
-    const option = Number(prompt("Enter your choice: "));
+    showMenuItems();
+    const option = getMenuInput();
+
     if (option === 1) {
-      console.log("\n");
-      const name = prompt("Enter Name: ");
-      const health = Number(prompt("Enter health (positive integer): "));
-      const strength = Number(prompt("Enter strength (positive integer): "));
-      const attack = Number(prompt("Enter attack (positive integer): "));
-      magical_arena.addNewPlayer(name ?? "Player", health, strength, attack);
+      const { name, health, strength, attack } = getPlayerDetailInput();
+      magical_arena.addNewPlayer(name, health, strength, attack);
     } else if (option === 2) {
       if (magical_arena.getTotalPlayers() < 2) {
-        console.log(
-          "There should be atleast two players in the Arena. Please add more players.\n"
-        );
+        showNotEnoughPlayerMessage();
       } else {
-        console.log("\n");
-        const first_player_id = Number(
-          prompt("Enter first player id (positive integer): ")
-        );
-        const second_player_id = Number(
-          prompt("Enter second player id (positive integer): ")
-        );
-        magical_arena.play(first_player_id, second_player_id);
+        const { id1, id2 } = getPlayerIds();
+        magical_arena.play(id1, id2);
       }
     } else {
-      console.log("Exit...\n\n");
+      exitMessage();
       break;
     }
   }

@@ -1,6 +1,17 @@
 //defining arena class entity and all the required methods.
 
-import { inValidAttribute, rollDice } from "../utils/helper";
+import {
+  displayDefenderHealth,
+  displayPlayerDetails,
+  displayPlayerStats,
+  displayWinnerName,
+  showInvalidInputMessage,
+  showInvalidPlayerMessage,
+  showPlayerEliminatedMessage,
+  showTotalPlayerMessage,
+  showWelcomeMessage,
+} from "../utils/consoleOutput";
+import { inValidAttribute, inValidPlayerIds, rollDice } from "../utils/helper";
 import { Player } from "./Player";
 
 export class Arena {
@@ -10,7 +21,7 @@ export class Arena {
   constructor() {
     this.total_players = 0;
     this.Players = new Map();
-    console.log("\nWelcome to the magical arena!!\n");
+    showWelcomeMessage();
   }
 
   hasPlayer(playerId: number): boolean {
@@ -33,9 +44,7 @@ export class Arena {
       inValidAttribute(strength) ||
       inValidAttribute(attack)
     ) {
-      console.log(
-        "Invalid inputs!! Health, strength and attack all should be positive integers\n"
-      );
+      showInvalidInputMessage();
       return -1;
     }
     const playerId = this.total_players;
@@ -47,46 +56,36 @@ export class Arena {
 
   //eliminate or delete player from Players map
   eliminatePlayer(id: number): void {
-    if (this.Players.has(id)) {
-      const player = this.Players.get(id);
-      console.log(`${player?.name} is eliminated\n`);
-      this.Players.delete(id);
-    } else console.log(`No player with id = ${id} exists.\n`);
+    const player = this.Players.get(id);
+    if (!player) {
+      showInvalidPlayerMessage(id);
+      return;
+    }
+    showPlayerEliminatedMessage(player.name);
+    this.Players.delete(id);
   }
 
   showPlayers(): void {
-    console.log(`\ntotal players are: ${this.getTotalPlayers()}\n`);
-    let i = 1;
-    this.Players.forEach((player, id) => {
-      const { name, health, strength, attack } = player;
-      console.log("Player ", i, "\n");
-      console.log(`\tName: ${name}`);
-      console.log(`\tPlayer id: ${id}`);
-      console.log(`\tHealth: ${health}`);
-      console.log(`\tStrength: ${strength}`);
-      console.log(`\tAttack: ${attack}`);
-      console.log("\n");
-      i += 1;
+    showTotalPlayerMessage(this.getTotalPlayers());
+    let playerCount = 1;
+    this.Players.forEach((player) => {
+      displayPlayerDetails(player, playerCount);
+      playerCount += 1;
     });
   }
 
   play(id_first_player: number, id_second_player: number) {
-    if (id_first_player === id_second_player) {
-      console.log("Ids can not be same for both the players.\n");
-      return;
-    }
     let attacker = this.Players.get(id_first_player);
     let defender = this.Players.get(id_second_player);
-    if (!attacker) {
-      console.log(`Player with id: ${id_second_player} does not exist.\n`);
+    if (
+      inValidPlayerIds(defender, attacker, id_first_player, id_second_player) ||
+      !defender ||
+      !attacker
+    )
       return;
-    }
-    if (!defender) {
-      console.log(`Player with id: ${id_first_player} does not exist.\n`);
-      return;
-    }
+
     //swapping attacker and defender with respect to their health. As lower health player will attack first.
-    if (defender?.health < attacker?.health) {
+    if (defender.health < attacker.health) {
       [attacker, defender] = [defender, attacker];
     }
 
@@ -96,14 +95,8 @@ export class Arena {
       const defenderRolledDice = rollDice();
       const defending_power = defender.strength * defenderRolledDice;
 
-      console.log(
-        `\n${attacker.name} rolled dice ${attackerRolledDice} and attacks with the power ${attacking_power}`
-      );
-      console.log(
-        `${defender.name} rolled dice ${defenderRolledDice} and defends with the strength ${defending_power}`
-      );
-
-      console.log("\nAfter Attack:\n");
+      displayPlayerStats(attacker.name, attackerRolledDice, attacking_power);
+      displayPlayerStats(defender.name, defenderRolledDice, defending_power);
 
       if (attacking_power > defending_power)
         defender.health = Math.max(
@@ -111,11 +104,11 @@ export class Arena {
           defender.health - (attacking_power - defending_power)
         ); //if attacking power is more than defender's strength, then we will deduct it from defender's health.
 
-      console.log(`${defender.name} has health: ${defender.health}\n`);
+      displayDefenderHealth(defender.name, defender.health);
 
-      if (defender.health > 0) [attacker, defender] = [defender, attacker]; //the if condition implies that finally, the current attacker will win and the current defender will loose, and it wont swap it again after loosing the game.
+      if (defender.health > 0) [attacker, defender] = [defender, attacker]; //here if condition implies that finally, the current attacker will win and the current defender will loose, and it wont swap it again after loosing the game.
     }
-    console.log(`${attacker.name} is winner\n`);
+    displayWinnerName(attacker.name);
     this.eliminatePlayer(defender.playerId);
   }
 }
