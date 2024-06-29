@@ -46,4 +46,25 @@ export class Arena {
     this.total_players += 1;
     return playerId;
   }
+
+  //eliminate or delete player from Players map
+  eliminatePlayer(id: number): void {
+    if (this.Players.has(id)) {
+      const player = this.Players.get(id);
+      console.log(`${player?.name} is eliminated\n`);
+      this.Players.delete(id);
+    } else console.log(`No player with id = ${id} exists.\n`);
+  }
+
+  showPlayers(): void {
+    console.log("\n");
+    for (const [id, player] of this.Players) {
+      const { name, health, strength, attack } = player;
+      console.log(`Name: ${name}`);
+      console.log(`Player id: ${id}`);
+      console.log(`Health: ${health}`);
+      console.log(`Strength: ${strength}`);
+      console.log(`Attack: ${attack}`);
+    }
+  }
 }
