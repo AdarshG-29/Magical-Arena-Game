@@ -10,7 +10,7 @@ export class Arena {
   constructor() {
     this.total_players = 0;
     this.Players = new Map();
-    console.log("Welcome to the magical arena!!\n");
+    console.log("\nWelcome to the magical arena!!\n");
   }
 
   hasPlayer(playerId: number): boolean {
@@ -27,17 +27,15 @@ export class Arena {
     strength: number,
     attack: number
   ): number {
-    //displaying invalid input messages
-    if (inValidAttribute(health)) {
-      console.log("Invalid input!! Health should be a positive integer\n");
-      return -1;
-    }
-    if (inValidAttribute(strength)) {
-      console.log("Invalid input!! Strength should be a positive integer\n");
-      return -1;
-    }
-    if (inValidAttribute(attack)) {
-      console.log("Invalid input!! Attack should be a positive integer\n");
+    //displaying invalid input message
+    if (
+      inValidAttribute(health) ||
+      inValidAttribute(strength) ||
+      inValidAttribute(attack)
+    ) {
+      console.log(
+        "Invalid inputs!! Health, strength and attack all should be positive integers\n"
+      );
       return -1;
     }
     const playerId = this.total_players;
@@ -57,15 +55,19 @@ export class Arena {
   }
 
   showPlayers(): void {
-    for (const [id, player] of this.Players) {
+    console.log(`\ntotal players are: ${this.getTotalPlayers()}\n`);
+    let i = 1;
+    this.Players.forEach((player, id) => {
       const { name, health, strength, attack } = player;
-      console.log(`Name: ${name}`);
-      console.log(`Player id: ${id}`);
-      console.log(`Health: ${health}`);
-      console.log(`Strength: ${strength}`);
-      console.log(`Attack: ${attack}`);
+      console.log("Player ", i, "\n");
+      console.log(`\tName: ${name}`);
+      console.log(`\tPlayer id: ${id}`);
+      console.log(`\tHealth: ${health}`);
+      console.log(`\tStrength: ${strength}`);
+      console.log(`\tAttack: ${attack}`);
       console.log("\n");
-    }
+      i += 1;
+    });
   }
 
   play(id_first_player: number, id_second_player: number) {
@@ -95,7 +97,7 @@ export class Arena {
       const defending_power = defender.strength * defenderRolledDice;
 
       console.log(
-        `${attacker.name} rolled dice ${attackerRolledDice} and attacks with the power ${attacking_power}`
+        `\n${attacker.name} rolled dice ${attackerRolledDice} and attacks with the power ${attacking_power}`
       );
       console.log(
         `${defender.name} rolled dice ${defenderRolledDice} and defends with the strength ${defending_power}`
