@@ -1,5 +1,5 @@
-import { Player } from "../entities/Player";
 import promptSync from "prompt-sync";
+import { IPlayer } from "../types/entities.type";
 
 const prompt = promptSync();
 
@@ -13,8 +13,8 @@ export function rollDice(): number {
 }
 
 export function inValidPlayerIds(
-  defender: Player | undefined,
-  attacker: Player | undefined,
+  defender: IPlayer | undefined,
+  attacker: IPlayer | undefined,
   id1: number,
   id2: number
 ) {
@@ -30,8 +30,9 @@ export function inValidPlayerIds(
   } else return false;
 }
 
-export function getMenuInput(): number {
-  return Number(prompt("Enter your choice: "));
+export function getMenuInput() {
+  let option = Number(prompt("Enter your choice: "));
+  return option;
 }
 
 export function getPlayerDetailInput() {

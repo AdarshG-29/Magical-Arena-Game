@@ -3,7 +3,7 @@ import {
   exitMessage,
   showMenuItems,
   showNotEnoughPlayerMessage,
-} from "./utils/consoleOutput";
+} from "./utils/consoleUtil";
 import {
   getMenuInput,
   getPlayerDetailInput,
@@ -22,7 +22,7 @@ function execute_magical_arena() {
       const { name, health, strength, attack } = getPlayerDetailInput();
       magical_arena.addNewPlayer(name, health, strength, attack);
     } else if (option === 2) {
-      if (magical_arena.getTotalPlayers() < 2) {
+      if (magical_arena.getPlayersCount() < 2) {
         showNotEnoughPlayerMessage();
       } else {
         const { id1, id2 } = getPlayerIds();

@@ -1,20 +1,21 @@
 //defining arena class entity and all the required methods.
-
+import { IArena, IResult } from "../types/entities.type";
 import {
+  displayAttackingPlayerStats,
   displayDefenderHealth,
+  displayDefendingPlayerStats,
   displayPlayerDetails,
-  displayPlayerStats,
   displayWinnerName,
   showInvalidInputMessage,
   showInvalidPlayerMessage,
   showPlayerEliminatedMessage,
   showTotalPlayerMessage,
   showWelcomeMessage,
-} from "../utils/consoleOutput";
+} from "../utils/consoleUtil";
 import { inValidAttribute, inValidPlayerIds, rollDice } from "../utils/helper";
 import { Player } from "./Player";
 
-export class Arena {
+export class Arena implements IArena {
   total_players: number;
   private Players: Map<number, Player>; // we are using map to make the game for n players and not just for 2 players
 
@@ -28,7 +29,7 @@ export class Arena {
     return this.Players.has(playerId);
   }
 
-  getTotalPlayers(): number {
+  getPlayersCount(): number {
     return this.Players.size;
   }
 
@@ -66,7 +67,7 @@ export class Arena {
   }
 
   showPlayers(): void {
-    showTotalPlayerMessage(this.getTotalPlayers());
+    showTotalPlayerMessage(this.getPlayersCount());
     let playerCount = 1;
     this.Players.forEach((player) => {
       displayPlayerDetails(player, playerCount);
@@ -82,7 +83,7 @@ export class Arena {
       !defender ||
       !attacker
     )
-      return;
+      return -1;
 
     //swapping attacker and defender with respect to their health. As lower health player will attack first.
     if (defender.health < attacker.health) {
@@ -95,8 +96,16 @@ export class Arena {
       const defenderRolledDice = rollDice();
       const defending_power = defender.strength * defenderRolledDice;
 
-      displayPlayerStats(attacker.name, attackerRolledDice, attacking_power);
-      displayPlayerStats(defender.name, defenderRolledDice, defending_power);
+      displayAttackingPlayerStats(
+        attacker.name,
+        attackerRolledDice,
+        attacking_power
+      );
+      displayDefendingPlayerStats(
+        defender.name,
+        defenderRolledDice,
+        defending_power
+      );
 
       if (attacking_power > defending_power)
         defender.health = Math.max(
@@ -108,7 +117,12 @@ export class Arena {
 
       if (defender.health > 0) [attacker, defender] = [defender, attacker]; //here if condition implies that finally, the current attacker will win and the current defender will loose, and it wont swap it again after loosing the game.
     }
+    const res: IResult = {
+      winner: attacker.playerId,
+      looser: defender.playerId,
+    };
     displayWinnerName(attacker.name);
     this.eliminatePlayer(defender.playerId);
+    return res;
   }
 }
